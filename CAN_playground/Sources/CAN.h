@@ -2,6 +2,7 @@
 
 #define CAN_INIT 0x01
 #define CAN_START 0x00
+#define CAN_SYNC 0x10
 #define CAN_LOOPBACK 0xE0	// Enable module in loopback mode with bus clock
 #define CAN_NORMAL 0xC0		// Enable module in normal mode with bus clock
 #define BTR0_125K 0x07
@@ -19,6 +20,7 @@
 #define MASK_CODE_ST_ID_LOW (MASK_CODE_ST_ID & 0xFF)
 
 // CAN module errors
+#define CAN_ERR_NONE 0x00
 #define CAN_ERR_BUFFER_FULL 0x01
 
 
@@ -27,9 +29,7 @@
 
 
 // Function to initialize CAN module
-void CANInit(void);
+void configureCAN(void);
 
 // Function to send CAN message
-unsigned char CANSendFrame(unsigned long id, unsigned char priority, unsigned char length, unsigned char *txdata);
-
-// Function to receive CAN message
+unsigned char TxCAN(unsigned long id, unsigned char priority, unsigned char length, unsigned char *txdata);

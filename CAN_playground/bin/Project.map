@@ -25,7 +25,7 @@ Entry point: 0xC029 (_Startup)
 _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     0
-  _Copy    *toCopyDownBeg 0xC17B
+  _Copy    *toCopyDownBeg 0xC17C
 } _startupData;
 
 *********************************************************************************************
@@ -34,8 +34,8 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
-.text                            320     R     0xC03B     0xC17A   ROM_C000
-.copy                              2     R     0xC17B     0xC17C   ROM_C000
+.text                            321     R     0xC03B     0xC17B   ROM_C000
+.copy                              2     R     0xC17C     0xC17D   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -262,7 +262,7 @@ Section Name                    Size  Type     From       To       Segment
 .vectSeg222_vect                   2     R     0xFFFE     0xFFFF   .vectSeg222
 
 Summary of section sizes per section type:
-READ_ONLY (R):         181 (dec:      385)
+READ_ONLY (R):         182 (dec:      386)
 READ_WRITE (R/W):      100 (dec:      256)
 NO_INIT (N/I):         104 (dec:      260)
 
@@ -519,9 +519,9 @@ MODULE:                 -- timer.c.o --
 - VARIABLES:
 MODULE:                 -- CAN.c.o --
 - PROCEDURES:
-     CANInit                                   C0C5      31      49       1   .text       
-     CANSendFrame                              C0F6      58      88       1   .text       
-     CANRxISR                                  C14E      2D      45       1   .text       
+     configureCAN                              C0C5      31      49       1   .text       
+     TxCAN                                     C0F6      59      89       1   .text       
+     RxHandlerCAN                              C14F      2D      45       1   .text       
 - VARIABLES:
      _Vector_38                                FFB2       2       2       0   .abs_section_ffb2
 
@@ -533,14 +533,14 @@ MODULE STATISTIC
   main.c.o                                     0     87      0
   Start12.c.o                                  0     49      0
   timer.c.o                                    0     51      0
-  CAN.c.o                                      0    182      2
+  CAN.c.o                                      0    183      2
   other                                      256     12      2
 
 *********************************************************************************************
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
-  main configureTimer msDelay CANInit CANSendFrame CANRxISR 
+  main configureTimer msDelay configureCAN TxCAN RxHandlerCAN 
 SECTION: ".init"
   Init _Startup 
 SECTION: ".abs_section_8"
@@ -1218,9 +1218,9 @@ OBJECT LIST SORTED BY ADDRESS
      main                                      C03B      57      87       1   .text       
      configureTimer                            C092       8       8       1   .text       
      msDelay                                   C09A      2B      43       1   .text       
-     CANInit                                   C0C5      31      49       1   .text       
-     CANSendFrame                              C0F6      58      88       1   .text       
-     CANRxISR                                  C14E      2D      45       1   .text       
+     configureCAN                              C0C5      31      49       1   .text       
+     TxCAN                                     C0F6      59      89       1   .text       
+     RxHandlerCAN                              C14F      2D      45       1   .text       
      _Vector_38                                FFB2       2       2       0   .abs_section_ffb2
 
 *********************************************************************************************
@@ -1233,7 +1233,7 @@ timer.c.o:
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC17B ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xC17C ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1242,16 +1242,16 @@ OBJECT-DEPENDENCIES SECTION
 ---------------------------------------------------------------------------------------------
 Init                      USES _startupData 
 _Startup                  USES __SEG_END_SSTACK Init main 
-main                      USES CANInit configureTimer _DDRS _PTS _CANCTL0 
-                                _CANRFLG _CANRIER CANSendFrame msDelay 
+main                      USES configureCAN configureTimer _DDRS _PTS _CANCTL0 
+                                _CANRFLG _CANRIER TxCAN msDelay 
 configureTimer            USES _TSCR1 _TSCR2 
 msDelay                   USES _TCTL1 _TCNT _TC7 _TIOS _TFLG1 
-CANInit                   USES _CANCTL0 _CANCTL1 _CANBTR0 _CANBTR1 _CANIDAC 
+configureCAN              USES _CANCTL0 _CANCTL1 _CANBTR0 _CANBTR1 _CANIDAC 
                                 _CANIDAR0 _CANIDMR0 _CANIDAR1 _CANIDMR1 
-CANSendFrame              USES _CANTFLG _CANTBSEL _CANTXIDR0 _CANTXDSR0 
+TxCAN                     USES _CANTFLG _CANTBSEL _CANTXIDR0 _CANTXDSR0 
                                 _CANTXDLR _CANTXTBPR 
-CANRxISR                  USES _CANRXDLR _CANRXDSR0 _CANRFLG 
-_Vector_38                USES CANRxISR 
+RxHandlerCAN              USES _CANRXDLR _CANRXDSR0 _CANRFLG 
+_Vector_38                USES RxHandlerCAN 
 
 *********************************************************************************************
 DEPENDENCY TREE
@@ -1260,11 +1260,11 @@ DEPENDENCY TREE
  | 
  +- main                
  |  | 
- |  +- CANInit             
+ |  +- configureCAN        
  |  |    
  |  +- configureTimer      
  |  |    
- |  +- CANSendFrame        
+ |  +- TxCAN               
  |  |    
  |  +- msDelay             
  |       
@@ -1276,7 +1276,7 @@ DEPENDENCY TREE
        
  _Vector_38          
  | 
- +- CANRxISR            
+ +- RxHandlerCAN        
       
 *********************************************************************************************
 STATISTIC SECTION
@@ -1284,6 +1284,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 5
-Total size of all blocks to be downloaded: 385
+Number of blocks to be downloaded: 6
+Total size of all blocks to be downloaded: 386
 

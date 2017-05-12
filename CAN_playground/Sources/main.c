@@ -8,13 +8,13 @@ void main(void) {
 	unsigned char errorflag = 0x00;
 	unsigned char txbuff[] = "ABCDEF";
 
-  CANInit();
+  configureCAN();
   configureTimer();
   CONFIGURE_LEDS;
   LED1_ON;
   LED2_OFF;
 
-	while (!(CANCTL0&0x10));
+	while (!(CANCTL0&CAN_SYNC));  // Wait for MSCAN to synchronize with the CAN bus
 	CANRFLG = 0xC3;
 	CANRIER = 0x01;
 
@@ -22,7 +22,7 @@ void main(void) {
 
 
 	for (;;) {
-		errorflag = CANSendFrame(ST_ID_100, 0x00, sizeof(txbuff)-1, txbuff);
+		errorflag = TxCAN(ST_ID_100, 0x00, sizeof(txbuff)-1, txbuff);
 		msDelay(250);
 		TOGGLE_LEDS;
 	}
