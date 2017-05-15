@@ -15,8 +15,8 @@
 
 // Timer configuration parameters
 #define TSCR1_INIT 0b10110000	// Turn on timer module and enable fast-clear and freeze in debug
-//#define TSCR2_INIT 0b00000010	// Set pre-scaler to 4 for finest resolution @50Hz PWM frequency
-#define TSCR2_INIT 0b10000010	// Set pre-scaler to 4 for finest resolution @50Hz PWM frequency, overflow interrupt enabled
+#define TSCR2_INIT 0b00000010	// Set pre-scaler to 4 for finest resolution @50Hz PWM frequency
+//#define TSCR2_INIT 0b10000010	// Set pre-scaler to 4 for finest resolution @50Hz PWM frequency, overflow interrupt enabled
 #define TCTL4_INIT 0b00000101	// Capture on rising edges of TC0 and TC1
 
 // Define TCTL_1_2 as a single 16 bit register made up of TCTL1 and TCTL2 together

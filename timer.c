@@ -3,14 +3,13 @@
 #include "TA_Header_S2017.h"  /* my macros and constants */
 #include "timer.h"  // Macros and constants for timer3handler.
 
-
 //;**************************************************************
 //;*                 configureTimer(void)
 //;*  Configures the timer module with parameters for PWM operation
 //;**************************************************************   
 void configureTimer(void) {
   TSCR1 = TSCR1_INIT; // Turn on timer module and enable fast-clear and freeze in debug
-  TSCR2 = TSCR2_INIT; // Set pre-scaler to 4 for finest resolution @50Hz PWM frequency
+  TSCR2 = TSCR2_INIT; // Set pre-scaler to 4 for finest resolution @50Hz PWM frequency, overflow interrupt disabled
 }//end of configureTimer
 
 
@@ -25,7 +24,7 @@ void msDelay(unsigned char time) {
 
   SET_OC_ACTION(7,OC_OFF);     // Set TC7 to not touch the port pin
   TC7 = TCNT + TCNT_mS; // Set first OC event timer (for 1mS)
-  TIOS |= TIOS_IOS7_MASK; // Enable TC1 as OC
+  TIOS |= TIOS_IOS7_MASK; // Enable TC7 as OC
 
   for(count = 0; count < time; count ++)
   {
@@ -33,7 +32,7 @@ void msDelay(unsigned char time) {
     TC7 += TCNT_mS;
   }
 
-  TIOS &= LOW(~TIOS_IOS7_MASK);  // Turn off OC on TC1
+  TIOS &= LOW(~TIOS_IOS7_MASK);  // Turn off OC on TC7
 
 }//end of msDelay
 

@@ -3,6 +3,7 @@
 #define CAN_INIT 0x01
 #define CAN_START 0x00
 #define CAN_SYNC 0x10
+#define CAN_RxACK 0x01		// Write to CANRFLG to acknowledge the interrupt and release the buffer
 #define CAN_LOOPBACK 0xE0	// Enable module in loopback mode with bus clock
 #define CAN_NORMAL 0xC0		// Enable module in normal mode with bus clock
 #define BTR0_125K 0x07

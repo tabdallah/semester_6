@@ -2,17 +2,27 @@
 #include "derivative.h"      /* derivative-specific definitions */
 #include "TA_Header_S2017.h"  /* my macros and constants */
 #include "CAN.h"
+#include "timer.h"
+
+// Global variables to store last received CAN message
+unsigned long CAN_ID;
+unsigned char CAN_DLC;
+unsigned char CAN_DATA[8];
 
 // Code from AN3034 app note
 
-// Function to initialize CAN module
-void CANInit(void) {
+//;**************************************************************
+//;*                 configureCAN()
+//;*  Configures & enables the CAN controller
+//;**************************************************************  
+void configureCAN(void) {
 	CANCTL0 = CAN_INIT;	// Enter initialization mode
 	while (!(CANCTL1 & CAN_INIT)) {
 		// Wait for initialization mode acknowledge
 	};
 
-	CANCTL1 = CAN_NORMAL;	// Enable module in loopback mode with oscillator clock
+	CANCTL1 = CAN_NORMAL;		// Enable module in normal mode with bus clock
+	//CANCTL1 = CAN_LOOPBACK;		// Enable module in loopback mode with bus clock
 	CANBTR0 = BTR0_125K;		// Set baud rate to 125KBaud
 	CANBTR1 = BTR1_125K;		// Set baud rate to 125KBaud
 
@@ -25,13 +35,18 @@ void CANInit(void) {
 	CANIDMR1 = MASK_CODE_ST_ID_LOW;
 
 	CANCTL0 = CAN_START;	// Exit initialization mode
+
 	while ((CANCTL1 & CAN_START) != 0) {
 		// Wait for normal mode acknowledge
 	};
 }
 
-// Function to send CAN frame
-unsigned char CANSendFrame(unsigned long id, unsigned char priority, unsigned char length, unsigned char *txdata) {
+//;**************************************************************
+//;*                 TxCAN(id, priority, length, *txdata)
+//;*  Outputs a CAN frame using polling
+//;**************************************************************   
+unsigned char TxCAN(unsigned long id, unsigned char priority,
+	unsigned char length, unsigned char *txdata) {
 
 	unsigned char txbuffer;	// To store the selected buffer for transmitting
 	unsigned char index;    // Index into the data array
@@ -57,16 +72,55 @@ unsigned char CANSendFrame(unsigned long id, unsigned char priority, unsigned ch
 	CANTFLG = txbuffer; 	// Start transmission
 
 	while ( (CANTFLG & txbuffer) != txbuffer);	// Wait for transmit to complete
+
+	return CAN_ERR_NONE;
 }
 
 
-// ISR for receiving CAN frame
-interrupt 38 CANRxISR(void)
-{
-	unsigned char length, index;
-	unsigned char rxdata[8];
-	length = (CANRXDLR & 0x0F);
-	for (index=0; index<length; index++)
-	rxdata[index] = *(&CANRXDSR0 + index); /* Get received data */
-	CANRFLG = 0x01;	// Claer Rx flag
+//;**************************************************************
+//;*                 RxHandlerCAN()
+//;*  Interrupt handler for CAN Rx
+//;**************************************************************
+interrupt 38 void RxHandlerCAN(void) {
+	
+	unsigned char i;	// Loop counter
+
+	// Read CAN ID
+	CAN_ID = CANRXIDR0;
+
+	// Read DLC
+	CAN_DLC = LO_NYBBLE(CANRXDLR);
+
+	// Read data on byte at a time
+	for (i=0; i < CAN_DLC; i++) {
+		CAN_DATA[i] = *(&CANRXDSR0 + i);
+	}
+
+	// Clear Rx flag
+	SET_BITS(CANRFLG, CAN_RxACK);
+}
+
+
+interrupt 37 void ErrHandlerCAN(void) {  
+  LED1_ON;
+	LED2_ON;
+	
+	for(;;) {
+		msDelay(250);
+		TOGGLE_LEDS;
+	}	  
+}
+
+interrupt 39 void TxHandlerCAN(void) {
+  LED1_OFF;
+  LED2_OFF;
+  
+  for(;;);
+}
+
+interrupt 36 void WkupHandlerCAN(void) {
+  LED1_ON;
+  LED2_ON;
+  
+  for(;;);
 }

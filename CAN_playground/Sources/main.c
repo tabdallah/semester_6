@@ -15,10 +15,10 @@ void main(void) {
   LED2_OFF;
 
 	while (!(CANCTL0&CAN_SYNC));  // Wait for MSCAN to synchronize with the CAN bus
-	CANRFLG = 0xC3;
-	CANRIER = 0x01;
+	SET_BITS(CANRFLG, 0xC3);
+	SET_BITS(CANRIER, 0x01);
 
-	//EnableInterrupts;
+	EnableInterrupts;
 
 
 	for (;;) {
