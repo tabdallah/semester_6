@@ -83,10 +83,16 @@ unsigned char TxCAN(unsigned long id, unsigned char priority,
 //;**************************************************************
 interrupt 38 void RxHandlerCAN(void) {
 	
-	unsigned char i;	// Loop counter
+	unsigned char i;	        // Loop counter
+	unsigned long ID0, ID1;   // To read CAN ID registers and manipulate 11-bit ID's into a single number
 
 	// Read CAN ID
-	CAN_ID = CANRXIDR0;
+	ID0 = (CANRXIDR0 << 3);
+	ID1 = (CANRXIDR1 >> 5);	
+	CAN_ID = (0x0FFF) & (ID0 | ID1);
+	
+	
+	//CAN_ID = CANRXIDR0;
 
 	// Read DLC
 	CAN_DLC = LO_NYBBLE(CANRXDLR);

@@ -26,7 +26,7 @@ _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
   _Range   pZeroOut       0x900     13
-  _Copy    *toCopyDownBeg 0xC1B6
+  _Copy    *toCopyDownBeg 0xC1CF
 } _startupData;
 
 *********************************************************************************************
@@ -35,8 +35,8 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
-.text                            379     R     0xC03B     0xC1B5   ROM_C000
-.copy                              2     R     0xC1B6     0xC1B7   ROM_C000
+.text                            404     R     0xC03B     0xC1CE   ROM_C000
+.copy                              2     R     0xC1CF     0xC1D0   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -267,7 +267,7 @@ Section Name                    Size  Type     From       To       Segment
 .vectSeg225_vect                   2     R     0xFFFE     0xFFFF   .vectSeg225
 
 Summary of section sizes per section type:
-READ_ONLY (R):         1C2 (dec:      450)
+READ_ONLY (R):         1DB (dec:      475)
 READ_WRITE (R/W):      10D (dec:      269)
 NO_INIT (N/I):         104 (dec:      260)
 
@@ -397,7 +397,7 @@ MODULE:                 -- mc9s12c32.c.o --
      _CANIDMR6                                  15E       1       1       0   .abs_section_15e
      _CANIDMR7                                  15F       1       1       0   .abs_section_15f
      _CANRXIDR0                                 160       1       1       1   .abs_section_160
-     _CANRXIDR1                                 161       1       1       0   .abs_section_161
+     _CANRXIDR1                                 161       1       1       1   .abs_section_161
      _CANRXIDR2                                 162       1       1       0   .abs_section_162
      _CANRXIDR3                                 163       1       1       0   .abs_section_163
      _CANRXDSR0                                 164       1       1       1   .abs_section_164
@@ -526,10 +526,10 @@ MODULE:                 -- CAN.c.o --
 - PROCEDURES:
      configureCAN                              C0CC      31      49       1   .text       
      TxCAN                                     C0FD      59      89       1   .text       
-     RxHandlerCAN                              C156      35      53       1   .text       
-     ErrHandlerCAN                             C18B      17      23       1   .text       
-     TxHandlerCAN                              C1A2       A      10       1   .text       
-     WkupHandlerCAN                            C1AC       A      10       1   .text       
+     RxHandlerCAN                              C156      4E      78       1   .text       
+     ErrHandlerCAN                             C1A4      17      23       1   .text       
+     TxHandlerCAN                              C1BB       A      10       1   .text       
+     WkupHandlerCAN                            C1C5       A      10       1   .text       
 - VARIABLES:
      _Vector_38                                FFB2       2       2       0   .abs_section_ffb2
      _Vector_37                                FFB4       2       2       0   .abs_section_ffb4
@@ -547,7 +547,7 @@ MODULE STATISTIC
   main.c.o                                     0     94      0
   Start12.c.o                                  0     49      0
   timer.c.o                                    0     51      0
-  CAN.c.o                                     13    234      8
+  CAN.c.o                                     13    259      8
   other                                      256     12      2
 
 *********************************************************************************************
@@ -1165,7 +1165,7 @@ OBJECT LIST SORTED BY ADDRESS
      _CANIDMR6                                  15E       1       1       0   .abs_section_15e
      _CANIDMR7                                  15F       1       1       0   .abs_section_15f
      _CANRXIDR0                                 160       1       1       1   .abs_section_160
-     _CANRXIDR1                                 161       1       1       0   .abs_section_161
+     _CANRXIDR1                                 161       1       1       1   .abs_section_161
      _CANRXIDR2                                 162       1       1       0   .abs_section_162
      _CANRXIDR3                                 163       1       1       0   .abs_section_163
      _CANRXDSR0                                 164       1       1       1   .abs_section_164
@@ -1246,10 +1246,10 @@ OBJECT LIST SORTED BY ADDRESS
      msDelay                                   C0A1      2B      43       2   .text       
      configureCAN                              C0CC      31      49       1   .text       
      TxCAN                                     C0FD      59      89       1   .text       
-     RxHandlerCAN                              C156      35      53       1   .text       
-     ErrHandlerCAN                             C18B      17      23       1   .text       
-     TxHandlerCAN                              C1A2       A      10       1   .text       
-     WkupHandlerCAN                            C1AC       A      10       1   .text       
+     RxHandlerCAN                              C156      4E      78       1   .text       
+     ErrHandlerCAN                             C1A4      17      23       1   .text       
+     TxHandlerCAN                              C1BB       A      10       1   .text       
+     WkupHandlerCAN                            C1C5       A      10       1   .text       
      _Vector_39                                FFB0       2       2       0   .abs_section_ffb0
      _Vector_38                                FFB2       2       2       0   .abs_section_ffb2
      _Vector_37                                FFB4       2       2       0   .abs_section_ffb4
@@ -1265,7 +1265,7 @@ timer.c.o:
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC1B6 ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xC1CF ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1282,8 +1282,8 @@ configureCAN              USES _CANCTL0 _CANCTL1 _CANBTR0 _CANBTR1 _CANIDAC
                                 _CANIDAR0 _CANIDMR0 _CANIDAR1 _CANIDMR1 
 TxCAN                     USES _CANTFLG _CANTBSEL _CANTXIDR0 _CANTXDSR0 
                                 _CANTXDLR _CANTXTBPR 
-RxHandlerCAN              USES _CANRXIDR0 CAN_ID _CANRXDLR CAN_DLC _CANRXDSR0 
-                                CAN_DATA _CANRFLG 
+RxHandlerCAN              USES _CANRXIDR0 _CANRXIDR1 CAN_ID _CANRXDLR CAN_DLC 
+                                _CANRXDSR0 CAN_DATA _CANRFLG 
 ErrHandlerCAN             USES _PTS msDelay 
 TxHandlerCAN              USES _PTS 
 WkupHandlerCAN            USES _PTS 
@@ -1337,6 +1337,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 9
-Total size of all blocks to be downloaded: 450
+Number of blocks to be downloaded: 8
+Total size of all blocks to be downloaded: 475
 
