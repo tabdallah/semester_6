@@ -2,14 +2,10 @@
 #include "derivative.h"      /* derivative-specific definitions */
 #include "TA_Header_S2017.h"  /* my macros and constants */
 #include "CAN.h"
-#include "timer.h"
+#include "FIFO.h"
+#include <stdlib.h>
 
-// Global variables to store last received CAN message
-unsigned long CAN_ID;
-unsigned char CAN_DLC;
-unsigned char CAN_DATA[8];
-
-// Code from AN3034 app note
+// Code from AN3034 app note (but not really because that code was hot garbage)
 
 //;**************************************************************
 //;*                 configureCAN()
@@ -82,51 +78,32 @@ unsigned char TxCAN(unsigned long id, unsigned char priority,
 //;*  Interrupt handler for CAN Rx
 //;**************************************************************
 interrupt 38 void RxHandlerCAN(void) {
-	
-	unsigned char i;	        // Loop counter
+
+	// Initialzie a new node to be added to the FIFO queue
+	link message = malloc(sizeof(node));
+  
+  unsigned char i;	      // Loop counter
 	unsigned long ID0, ID1;   // To read CAN ID registers and manipulate 11-bit ID's into a single number
 
-	// Read CAN ID
+	// Read CAN ID & simplify it to a single number
 	ID0 = (CANRXIDR0 << 3);
 	ID1 = (CANRXIDR1 >> 5);	
-	CAN_ID = (0x0FFF) & (ID0 | ID1);
+	message->Data.ID = (0x0FFF) & (ID0 | ID1);
 	
-	
-	//CAN_ID = CANRXIDR0;
-
 	// Read DLC
-	CAN_DLC = LO_NYBBLE(CANRXDLR);
+	message->Data.DLC = LO_NYBBLE(CANRXDLR);
 
-	// Read data on byte at a time
-	for (i=0; i < CAN_DLC; i++) {
-		CAN_DATA[i] = *(&CANRXDSR0 + i);
+	// Malloc space for the data based on DLC
+	message->Data.DATA = malloc(message->Data.DLC);
+
+	// Read data one byte at a time
+	for (i=0; i < message->Data.DLC; i++) {
+		*(message->Data.DATA + i) = *(&CANRXDSR0 + i);
 	}
+
+	// Add the new node to the FIFO queue
+	AddToQueue(message);
 
 	// Clear Rx flag
 	SET_BITS(CANRFLG, CAN_RxACK);
-}
-
-
-interrupt 37 void ErrHandlerCAN(void) {  
-  LED1_ON;
-	LED2_ON;
-	
-	for(;;) {
-		msDelay(250);
-		TOGGLE_LEDS;
-	}	  
-}
-
-interrupt 39 void TxHandlerCAN(void) {
-  LED1_OFF;
-  LED2_OFF;
-  
-  for(;;);
-}
-
-interrupt 36 void WkupHandlerCAN(void) {
-  LED1_ON;
-  LED2_ON;
-  
-  for(;;);
 }

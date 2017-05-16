@@ -15,8 +15,14 @@ FILE SECTION
 mc9s12c32.c.o                           Model: SMALL,         Lang: ANSI-C
 main.c.o                                Model: SMALL,         Lang: ANSI-C
 Start12.c.o                             Model: SMALL,         Lang: ANSI-C
+HEAP.C.o (ansisi.lib)                   Model: SMALL,         Lang: ANSI-C
+PRINTF.C.o (ansisi.lib)                 Model: SMALL,         Lang: ANSI-C
+ALLOC.C.o (ansisi.lib)                  Model: SMALL,         Lang: ANSI-C
+rtshc12.c.o (ansisi.lib)                Model: SMALL,         Lang: ANSI-C
 timer.c.o                               Model: SMALL,         Lang: ANSI-C
 CAN.c.o                                 Model: SMALL,         Lang: ANSI-C
+FIFO.c.o                                Model: SMALL,         Lang: ANSI-C
+lcd.c.o                                 Model: SMALL,         Lang: ANSI-C
 
 *********************************************************************************************
 STARTUP SECTION
@@ -25,8 +31,8 @@ Entry point: 0xC029 (_Startup)
 _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
-  _Range   pZeroOut       0x900     13
-  _Copy    *toCopyDownBeg 0xC1CF
+  _Range   pZeroOut       0x900     114
+  _Copy    *toCopyDownBeg 0xCA54
 } _startupData;
 
 *********************************************************************************************
@@ -35,8 +41,10 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
-.text                            404     R     0xC03B     0xC1CE   ROM_C000
-.copy                              2     R     0xC1CF     0xC1D0   ROM_C000
+.rodata                          116     R     0xC03B     0xC0AE   ROM_C000
+.rodata1                          17     R     0xC0AF     0xC0BF   ROM_C000
+.text                           2357     R     0xC0C0     0xC9F4   ROM_C000
+.copy                              2     R     0xCA54     0xCA55   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -260,15 +268,15 @@ Section Name                    Size  Type     From       To       Segment
 .abs_section_16e                   2   N/I      0x16E      0x16F   .absSeg219
 .abs_section_17e                   2   N/I      0x17E      0x17F   .absSeg220
 .abs_section_ffb2                  2     R     0xFFB2     0xFFB3   .absSeg221
-.abs_section_ffb4                  2     R     0xFFB4     0xFFB5   .absSeg222
-.abs_section_ffb0                  2     R     0xFFB0     0xFFB1   .absSeg223
-.abs_section_ffb6                  2     R     0xFFB6     0xFFB7   .absSeg224
-.common                           13   R/W      0x900      0x90C   RAM
-.vectSeg225_vect                   2     R     0xFFFE     0xFFFF   .vectSeg225
+.bss                              10   R/W      0x900      0x909   RAM
+RUNTIME                           95     R     0xC9F5     0xCA53   ROM_C000
+HEAP_SEGMENT                     100   R/W      0x90A      0x96D   RAM
+.common                            4   R/W      0x96E      0x971   RAM
+.vectSeg222_vect                   2     R     0xFFFE     0xFFFF   .vectSeg222
 
 Summary of section sizes per section type:
-READ_ONLY (R):         1DB (dec:      475)
-READ_WRITE (R/W):      10D (dec:      269)
+READ_ONLY (R):         A5A (dec:     2650)
+READ_WRITE (R/W):      172 (dec:      370)
 NO_INIT (N/I):         104 (dec:      260)
 
 *********************************************************************************************
@@ -430,7 +438,7 @@ MODULE:                 -- mc9s12c32.c.o --
      _PERT                                      244       1       1       0   .abs_section_244
      _PPST                                      245       1       1       0   .abs_section_245
      _MODRR                                     247       1       1       0   .abs_section_247
-     _PTS                                       248       1       1      12   .abs_section_248
+     _PTS                                       248       1       1       4   .abs_section_248
      _PTIS                                      249       1       1       0   .abs_section_249
      _DDRS                                      24A       1       1       1   .abs_section_24a
      _RDRS                                      24B       1       1       0   .abs_section_24b
@@ -466,8 +474,8 @@ MODULE:                 -- mc9s12c32.c.o --
      _RDRAD                                     273       1       1       0   .abs_section_273
      _PERAD                                     274       1       1       0   .abs_section_274
      _PPSAD                                     275       1       1       0   .abs_section_275
-     _PORTAB                                      0       2       2       0   .abs_section_0
-     _DDRAB                                       2       2       2       0   .abs_section_2
+     _PORTAB                                      0       2       2      30   .abs_section_0
+     _DDRAB                                       2       2       2       1   .abs_section_2
      _PARTID                                     1A       2       2       0   .abs_section_1a
      _DBGTB                                      22       2       2       0   .abs_section_22
      _DBGCC                                      26       2       2       0   .abs_section_26
@@ -507,8 +515,9 @@ MODULE:                 -- mc9s12c32.c.o --
      _CANTXTSR                                  17E       2       2       0   .abs_section_17e
 MODULE:                 -- main.c.o --
 - PROCEDURES:
-     main                                      C03B      5E      94       1   .text       
+     main                                      C0C0      93     147       1   .text       
 - VARIABLES:
+     STRING.Program.started..2                 C0AF      11      17       1   .rodata1    
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
      Init                                      C000      29      41       1   .init       
@@ -517,47 +526,100 @@ MODULE:                 -- Start12.c.o --
      _startupData                              C031       6       6       3   .startData  
 - LABELS:
      __SEG_END_SSTACK                           900       0       0       1               
+MODULE:                 -- HEAP.C.o (ansisi.lib) --
+- PROCEDURES:
+     _heapcrash_                               C153       C      12       3   .text       
+- VARIABLES:
+     _heap_                                     90A      64     100       2   HEAP_SEGMENT
+MODULE:                 -- PRINTF.C.o (ansisi.lib) --
+- PROCEDURES:
+     vprintf                                   C15F     478    1144      49   .text       
+     _out                                      C5D7       C      12       9   .text       
+     deposit_char                              C5E3       F      15       1   .text       
+     vsprintf                                  C5F2      29      41       1   .text       
+- VARIABLES:
+     pow10                                     C03B      28      40       4   .rodata     
+     pow16                                     C063      20      32       4   .rodata     
+     pow8                                      C083      2C      44       4   .rodata     
+     pbuf                                       900       6       6      15   .bss        
+MODULE:                 -- ALLOC.C.o (ansisi.lib) --
+- PROCEDURES:
+     malloc                                    C61B      A5     165       2   .text       
+     free                                      C6C0      C4     196       3   .text       
+- VARIABLES:
+     heap_end                                   906       2       2       3   .bss        
+     free_ptr                                   908       2       2       8   .bss        
+MODULE:                 -- rtshc12.c.o (ansisi.lib) --
+- PROCEDURES:
+     _LCMP_P                                   C9F5      15      21       3   RUNTIME     
+     _LNEG                                     CA0A       D      13       1   RUNTIME     
+     _ILSEXT                                   CA17       7       7       2   RUNTIME     
+     _CASE_DIRECT_BYTE                         CA1E       5       5       1   RUNTIME     
+     _CASE_SEARCH_8                            CA23      17      23       1   RUNTIME     
+     _CASE_SEARCH_8_BYTE                       CA3A      1A      26       1   RUNTIME     
+- VARIABLES:
 MODULE:                 -- timer.c.o --
 - PROCEDURES:
-     configureTimer                            C099       8       8       1   .text       
-     msDelay                                   C0A1      2B      43       2   .text       
+     configureTimer                            C784       8       8       1   .text       
+     msDelay                                   C78C      2B      43       7   .text       
 - VARIABLES:
 MODULE:                 -- CAN.c.o --
 - PROCEDURES:
-     configureCAN                              C0CC      31      49       1   .text       
-     TxCAN                                     C0FD      59      89       1   .text       
-     RxHandlerCAN                              C156      4E      78       1   .text       
-     ErrHandlerCAN                             C1A4      17      23       1   .text       
-     TxHandlerCAN                              C1BB       A      10       1   .text       
-     WkupHandlerCAN                            C1C5       A      10       1   .text       
+     configureCAN                              C7B7      31      49       1   .text       
+     TxCAN                                     C7E8      59      89       1   .text       
+     RxHandlerCAN                              C841      63      99       1   .text       
 - VARIABLES:
      _Vector_38                                FFB2       2       2       0   .abs_section_ffb2
-     _Vector_37                                FFB4       2       2       0   .abs_section_ffb4
-     _Vector_39                                FFB0       2       2       0   .abs_section_ffb0
-     _Vector_36                                FFB6       2       2       0   .abs_section_ffb6
-     CAN_ID                                     900       4       4       2   .common     
-     CAN_DLC                                    904       1       1       2   .common     
-     CAN_DATA                                   905       8       8       1   .common     
+MODULE:                 -- FIFO.c.o --
+- PROCEDURES:
+     InitQueue                                 C8A4       9       9       1   .text       
+     IsQueueEmpty                              C8AD       B      11       3   .text       
+     AddToQueue                                C8B8      1E      30       1   .text       
+     DeQueue                                   C8D6      15      21       1   .text       
+- VARIABLES:
+     pHead                                      96E       2       2       6   .common     
+     pTail                                      970       2       2       3   .common     
+MODULE:                 -- lcd.c.o --
+- PROCEDURES:
+     configureLCD                              C8EB      59      89       1   .text       
+     LCDdata                                   C944      36      54       1   .text       
+     LCDcmd                                    C97A      36      54       7   .text       
+     LCDputs                                   C9B0      29      41       1   .text       
+     LCDprintf                                 C9D9      1C      28       1   .text       
+- VARIABLES:
 
 *********************************************************************************************
 MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12c32.c.o                              260      0      0
-  main.c.o                                     0     94      0
+  main.c.o                                     0    147     17
   Start12.c.o                                  0     49      0
+  HEAP.C.o (ansisi.lib)                      100     12      0
+  PRINTF.C.o (ansisi.lib)                      6   1212    116
+  ALLOC.C.o (ansisi.lib)                       4    361      0
+  rtshc12.c.o (ansisi.lib)                     0     95      0
   timer.c.o                                    0     51      0
-  CAN.c.o                                     13    259      8
+  CAN.c.o                                      0    237      2
+  FIFO.c.o                                     4     71      0
+  lcd.c.o                                      0    266      0
   other                                      256     12      2
 
 *********************************************************************************************
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
-  main configureTimer msDelay configureCAN TxCAN RxHandlerCAN ErrHandlerCAN 
-  TxHandlerCAN WkupHandlerCAN 
+  main _heapcrash_ vprintf _out deposit_char vsprintf malloc free 
+  configureTimer msDelay configureCAN TxCAN RxHandlerCAN InitQueue IsQueueEmpty 
+  AddToQueue DeQueue configureLCD LCDdata LCDcmd LCDputs LCDprintf 
+SECTION: ".bss"
+  pbuf heap_end free_ptr 
 SECTION: ".init"
   Init _Startup 
+SECTION: ".rodata"
+  pow10 pow16 pow8 
+SECTION: ".rodata1"
+  STRING.Program.started..2 
 SECTION: ".abs_section_8"
   _PORTE 
 SECTION: ".abs_section_9"
@@ -1000,23 +1062,21 @@ SECTION: ".abs_section_16e"
   _CANRXTSR 
 SECTION: ".abs_section_17e"
   _CANTXTSR 
+SECTION: "RUNTIME"
+  _LCMP_P _LNEG _ILSEXT _CASE_DIRECT_BYTE _CASE_SEARCH_8 _CASE_SEARCH_8_BYTE 
+SECTION: "HEAP_SEGMENT"
+  _heap_ 
 SECTION: ".common"
-  CAN_ID CAN_DLC CAN_DATA 
+  pHead pTail 
 SECTION: ".abs_section_ffb2"
   _Vector_38 
-SECTION: ".abs_section_ffb4"
-  _Vector_37 
-SECTION: ".abs_section_ffb0"
-  _Vector_39 
-SECTION: ".abs_section_ffb6"
-  _Vector_36 
 
 *********************************************************************************************
 OBJECT LIST SORTED BY ADDRESS
      Name                                      Addr   hSize   dSize     Ref    Section   RLIB
 ---------------------------------------------------------------------------------------------
-     _PORTAB                                      0       2       2       0   .abs_section_0
-     _DDRAB                                       2       2       2       0   .abs_section_2
+     _PORTAB                                      0       2       2      30   .abs_section_0
+     _DDRAB                                       2       2       2       1   .abs_section_2
      _PORTE                                       8       1       1       0   .abs_section_8
      _DDRE                                        9       1       1       0   .abs_section_9
      _PEAR                                        A       1       1       0   .abs_section_a
@@ -1200,7 +1260,7 @@ OBJECT LIST SORTED BY ADDRESS
      _PERT                                      244       1       1       0   .abs_section_244
      _PPST                                      245       1       1       0   .abs_section_245
      _MODRR                                     247       1       1       0   .abs_section_247
-     _PTS                                       248       1       1      12   .abs_section_248
+     _PTS                                       248       1       1       4   .abs_section_248
      _PTIS                                      249       1       1       0   .abs_section_249
      _DDRS                                      24A       1       1       1   .abs_section_24a
      _RDRS                                      24B       1       1       0   .abs_section_24b
@@ -1236,36 +1296,72 @@ OBJECT LIST SORTED BY ADDRESS
      _RDRAD                                     273       1       1       0   .abs_section_273
      _PERAD                                     274       1       1       0   .abs_section_274
      _PPSAD                                     275       1       1       0   .abs_section_275
-     CAN_ID                                     900       4       4       2   .common     
-     CAN_DLC                                    904       1       1       2   .common     
-     CAN_DATA                                   905       8       8       1   .common     
+     pbuf                                       900       6       6      15   .bss        
+     heap_end                                   906       2       2       3   .bss        
+     free_ptr                                   908       2       2       8   .bss        
+     _heap_                                     90A      64     100       2   HEAP_SEGMENT
+     pHead                                      96E       2       2       6   .common     
+     pTail                                      970       2       2       3   .common     
      Init                                      C000      29      41       1   .init       
      _Startup                                  C029       8       8       0   .init       
-     main                                      C03B      5E      94       1   .text       
-     configureTimer                            C099       8       8       1   .text       
-     msDelay                                   C0A1      2B      43       2   .text       
-     configureCAN                              C0CC      31      49       1   .text       
-     TxCAN                                     C0FD      59      89       1   .text       
-     RxHandlerCAN                              C156      4E      78       1   .text       
-     ErrHandlerCAN                             C1A4      17      23       1   .text       
-     TxHandlerCAN                              C1BB       A      10       1   .text       
-     WkupHandlerCAN                            C1C5       A      10       1   .text       
-     _Vector_39                                FFB0       2       2       0   .abs_section_ffb0
+     pow10                                     C03B      28      40       4   .rodata     
+     pow16                                     C063      20      32       4   .rodata     
+     pow8                                      C083      2C      44       4   .rodata     
+     STRING.Program.started..2                 C0AF      11      17       1   .rodata1    
+     main                                      C0C0      93     147       1   .text       
+     _heapcrash_                               C153       C      12       3   .text       
+     vprintf                                   C15F     478    1144      49   .text       
+     _out                                      C5D7       C      12       9   .text       
+     deposit_char                              C5E3       F      15       1   .text       
+     vsprintf                                  C5F2      29      41       1   .text       
+     malloc                                    C61B      A5     165       2   .text       
+     free                                      C6C0      C4     196       3   .text       
+     configureTimer                            C784       8       8       1   .text       
+     msDelay                                   C78C      2B      43       7   .text       
+     configureCAN                              C7B7      31      49       1   .text       
+     TxCAN                                     C7E8      59      89       1   .text       
+     RxHandlerCAN                              C841      63      99       1   .text       
+     InitQueue                                 C8A4       9       9       1   .text       
+     IsQueueEmpty                              C8AD       B      11       3   .text       
+     AddToQueue                                C8B8      1E      30       1   .text       
+     DeQueue                                   C8D6      15      21       1   .text       
+     configureLCD                              C8EB      59      89       1   .text       
+     LCDdata                                   C944      36      54       1   .text       
+     LCDcmd                                    C97A      36      54       7   .text       
+     LCDputs                                   C9B0      29      41       1   .text       
+     LCDprintf                                 C9D9      1C      28       1   .text       
+     _LCMP_P                                   C9F5      15      21       3   RUNTIME     
+     _LNEG                                     CA0A       D      13       1   RUNTIME     
+     _ILSEXT                                   CA17       7       7       2   RUNTIME     
+     _CASE_DIRECT_BYTE                         CA1E       5       5       1   RUNTIME     
+     _CASE_SEARCH_8                            CA23      17      23       1   RUNTIME     
+     _CASE_SEARCH_8_BYTE                       CA3A      1A      26       1   RUNTIME     
      _Vector_38                                FFB2       2       2       0   .abs_section_ffb2
-     _Vector_37                                FFB4       2       2       0   .abs_section_ffb4
-     _Vector_36                                FFB6       2       2       0   .abs_section_ffb6
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
 ---------------------------------------------------------------------------------------------
 NOT USED PROCEDURES
+PRINTF.C.o (ansisi.lib):
+  set_printf sprintf 
+ALLOC.C.o (ansisi.lib):
+  calloc realloc 
+rtshc12.c.o (ansisi.lib):
+  _BSHL _BSHRS _BSHRU _BDIVMODU _BDIVMODS _ISHL _ISHRU _ISHRS _LSHL _LSHRU 
+  _LSHRS _LADD _LSUB _LAND _LOR _LXOR _LCMP _LCMP_PP _LCOM _LINC _LDEC _LMUL 
+  _LMULU16x32 _LMULS16x32 _lDivMod _LDIVU _NEG_P _LDIVS _LMODU _LMODS _COPY 
+  _CASE_DIRECT _CASE_CHECKED _CASE_CHECKED_BYTE _CASE_SEARCH _CASE_SEARCH_BYTE 
+  _FCALL _FPCMP 
 timer.c.o:
   usDelay 
+NOT USED VARIABLES
+rtshc12.c.o (ansisi.lib):
+  _PowOfTwo_8 _PowOfTwo_16 _PowOfTwo_32 errno 
 
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC1CF ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xCA54 ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1274,23 +1370,36 @@ OBJECT-DEPENDENCIES SECTION
 ---------------------------------------------------------------------------------------------
 Init                      USES _startupData 
 _Startup                  USES __SEG_END_SSTACK Init main 
-main                      USES configureCAN configureTimer _DDRS _PTS _CANCTL0 
-                                _CANRFLG _CANRIER TxCAN msDelay 
+main                      USES configureCAN configureTimer configureLCD _DDRS 
+                                InitQueue _PTS STRING.Program.started..2 LCDprintf 
+                                _CANCTL0 _CANRFLG _CANRIER TxCAN IsQueueEmpty DeQueue 
+                                free msDelay 
+vprintf                   USES vprintf _out _CASE_SEARCH_8_BYTE 
+                                _CASE_DIRECT_BYTE _CASE_SEARCH_8 pbuf _ILSEXT _LNEG pow8 _LCMP_P 
+                                pow16 pow10 
+_out                      USES pbuf 
+deposit_char              USES pbuf 
+vsprintf                  USES pbuf deposit_char vprintf 
+malloc                    USES heap_end _heap_ free_ptr _heapcrash_ 
+free                      USES _heap_ heap_end free free_ptr _heapcrash_ 
 configureTimer            USES _TSCR1 _TSCR2 
 msDelay                   USES _TCTL1 _TCNT _TC7 _TIOS _TFLG1 
 configureCAN              USES _CANCTL0 _CANCTL1 _CANBTR0 _CANBTR1 _CANIDAC 
                                 _CANIDAR0 _CANIDMR0 _CANIDAR1 _CANIDMR1 
 TxCAN                     USES _CANTFLG _CANTBSEL _CANTXIDR0 _CANTXDSR0 
                                 _CANTXDLR _CANTXTBPR 
-RxHandlerCAN              USES _CANRXIDR0 _CANRXIDR1 CAN_ID _CANRXDLR CAN_DLC 
-                                _CANRXDSR0 CAN_DATA _CANRFLG 
-ErrHandlerCAN             USES _PTS msDelay 
-TxHandlerCAN              USES _PTS 
-WkupHandlerCAN            USES _PTS 
-_Vector_39                USES TxHandlerCAN 
+RxHandlerCAN              USES malloc _CANRXIDR0 _CANRXIDR1 _CANRXDLR 
+                                _CANRXDSR0 AddToQueue _CANRFLG 
+InitQueue                 USES pHead pTail 
+IsQueueEmpty              USES pHead 
+AddToQueue                USES IsQueueEmpty pHead pTail 
+DeQueue                   USES IsQueueEmpty pHead 
+configureLCD              USES _DDRAB _PORTAB msDelay LCDcmd 
+LCDdata                   USES _PORTAB msDelay 
+LCDcmd                    USES _PORTAB msDelay 
+LCDputs                   USES LCDcmd msDelay LCDdata 
+LCDprintf                 USES vsprintf LCDputs 
 _Vector_38                USES RxHandlerCAN 
-_Vector_37                USES ErrHandlerCAN 
-_Vector_36                USES WkupHandlerCAN 
 
 *********************************************************************************************
 DEPENDENCY TREE
@@ -1303,10 +1412,62 @@ DEPENDENCY TREE
  |  |    
  |  +- configureTimer      
  |  |    
+ |  +- configureLCD        
+ |  |  | 
+ |  |  +- msDelay             
+ |  |  |    
+ |  |  +- LCDcmd              
+ |  |     | 
+ |  |     +- msDelay              (see above)
+ |  |        
+ |  +- InitQueue           
+ |  |    
+ |  +- LCDprintf           
+ |  |  | 
+ |  |  +- vsprintf            
+ |  |  |  | 
+ |  |  |  +- deposit_char        
+ |  |  |  |    
+ |  |  |  +- vprintf             
+ |  |  |     | 
+ |  |  |     +- _out                
+ |  |  |     |    
+ |  |  |     +- _CASE_SEARCH_8_BYTE 
+ |  |  |     |    
+ |  |  |     +- _CASE_DIRECT_BYTE   
+ |  |  |     |    
+ |  |  |     +- _CASE_SEARCH_8      
+ |  |  |     |    
+ |  |  |     +- _ILSEXT             
+ |  |  |     |    
+ |  |  |     +- _LNEG               
+ |  |  |     |    
+ |  |  |     +- _LCMP_P             
+ |  |  |          
+ |  |  +- LCDputs             
+ |  |     | 
+ |  |     +- LCDcmd               (see above)
+ |  |     |  
+ |  |     +- msDelay              (see above)
+ |  |     |  
+ |  |     +- LCDdata             
+ |  |        | 
+ |  |        +- msDelay              (see above)
+ |  |           
  |  +- TxCAN               
  |  |    
- |  +- msDelay             
- |       
+ |  +- IsQueueEmpty        
+ |  |    
+ |  +- DeQueue             
+ |  |  | 
+ |  |  +- IsQueueEmpty         (see above)
+ |  |     
+ |  +- free                
+ |  |  | 
+ |  |  +- _heapcrash_         
+ |  |       
+ |  +- msDelay              (see above)
+ |     
  +- _Startup            
     | 
     +- Init                
@@ -1316,21 +1477,15 @@ DEPENDENCY TREE
  _Vector_38          
  | 
  +- RxHandlerCAN        
-      
- _Vector_37          
- | 
- +- ErrHandlerCAN       
     | 
-    +- msDelay              (see above)
-       
- _Vector_39          
- | 
- +- TxHandlerCAN        
-      
- _Vector_36          
- | 
- +- WkupHandlerCAN      
-      
+    +- malloc              
+    |  | 
+    |  +- _heapcrash_          (see above)
+    |     
+    +- AddToQueue          
+       | 
+       +- IsQueueEmpty         (see above)
+          
 *********************************************************************************************
 STATISTIC SECTION
 ---------------------------------------------------------------------------------------------
@@ -1338,5 +1493,5 @@ STATISTIC SECTION
 ExeFile:
 --------
 Number of blocks to be downloaded: 8
-Total size of all blocks to be downloaded: 475
+Total size of all blocks to be downloaded: 2650
 
