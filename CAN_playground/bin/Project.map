@@ -32,7 +32,7 @@ _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
   _Range   pZeroOut       0x900     114
-  _Copy    *toCopyDownBeg 0xCA54
+  _Copy    *toCopyDownBeg 0xCAAF
 } _startupData;
 
 *********************************************************************************************
@@ -42,9 +42,9 @@ Section Name                    Size  Type     From       To       Segment
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
 .rodata                          116     R     0xC03B     0xC0AE   ROM_C000
-.rodata1                          17     R     0xC0AF     0xC0BF   ROM_C000
-.text                           2357     R     0xC0C0     0xC9F4   ROM_C000
-.copy                              2     R     0xCA54     0xCA55   ROM_C000
+.rodata1                          60     R     0xC0AF     0xC0EA   ROM_C000
+.text                           2405     R     0xC0EB     0xCA4F   ROM_C000
+.copy                              2     R     0xCAAF     0xCAB0   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -269,13 +269,13 @@ Section Name                    Size  Type     From       To       Segment
 .abs_section_17e                   2   N/I      0x17E      0x17F   .absSeg220
 .abs_section_ffb2                  2     R     0xFFB2     0xFFB3   .absSeg221
 .bss                              10   R/W      0x900      0x909   RAM
-RUNTIME                           95     R     0xC9F5     0xCA53   ROM_C000
+RUNTIME                           95     R     0xCA50     0xCAAE   ROM_C000
 HEAP_SEGMENT                     100   R/W      0x90A      0x96D   RAM
 .common                            4   R/W      0x96E      0x971   RAM
 .vectSeg222_vect                   2     R     0xFFFE     0xFFFF   .vectSeg222
 
 Summary of section sizes per section type:
-READ_ONLY (R):         A5A (dec:     2650)
+READ_ONLY (R):         AB5 (dec:     2741)
 READ_WRITE (R/W):      172 (dec:      370)
 NO_INIT (N/I):         104 (dec:      260)
 
@@ -515,9 +515,10 @@ MODULE:                 -- mc9s12c32.c.o --
      _CANTXTSR                                  17E       2       2       0   .abs_section_17e
 MODULE:                 -- main.c.o --
 - PROCEDURES:
-     main                                      C0C0      93     147       1   .text       
+     main                                      C0EB      C3     195       1   .text       
 - VARIABLES:
      STRING.Program.started..2                 C0AF      11      17       1   .rodata1    
+     STRING.ID.0x.03lx.DLC...u...3             C0C0      2B      43       1   .rodata1    
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
      Init                                      C000      29      41       1   .init       
@@ -528,15 +529,15 @@ MODULE:                 -- Start12.c.o --
      __SEG_END_SSTACK                           900       0       0       1               
 MODULE:                 -- HEAP.C.o (ansisi.lib) --
 - PROCEDURES:
-     _heapcrash_                               C153       C      12       3   .text       
+     _heapcrash_                               C1AE       C      12       3   .text       
 - VARIABLES:
      _heap_                                     90A      64     100       2   HEAP_SEGMENT
 MODULE:                 -- PRINTF.C.o (ansisi.lib) --
 - PROCEDURES:
-     vprintf                                   C15F     478    1144      49   .text       
-     _out                                      C5D7       C      12       9   .text       
-     deposit_char                              C5E3       F      15       1   .text       
-     vsprintf                                  C5F2      29      41       1   .text       
+     vprintf                                   C1BA     478    1144      49   .text       
+     _out                                      C632       C      12       9   .text       
+     deposit_char                              C63E       F      15       1   .text       
+     vsprintf                                  C64D      29      41       1   .text       
 - VARIABLES:
      pow10                                     C03B      28      40       4   .rodata     
      pow16                                     C063      20      32       4   .rodata     
@@ -544,48 +545,48 @@ MODULE:                 -- PRINTF.C.o (ansisi.lib) --
      pbuf                                       900       6       6      15   .bss        
 MODULE:                 -- ALLOC.C.o (ansisi.lib) --
 - PROCEDURES:
-     malloc                                    C61B      A5     165       2   .text       
-     free                                      C6C0      C4     196       3   .text       
+     malloc                                    C676      A5     165       2   .text       
+     free                                      C71B      C4     196       3   .text       
 - VARIABLES:
      heap_end                                   906       2       2       3   .bss        
      free_ptr                                   908       2       2       8   .bss        
 MODULE:                 -- rtshc12.c.o (ansisi.lib) --
 - PROCEDURES:
-     _LCMP_P                                   C9F5      15      21       3   RUNTIME     
-     _LNEG                                     CA0A       D      13       1   RUNTIME     
-     _ILSEXT                                   CA17       7       7       2   RUNTIME     
-     _CASE_DIRECT_BYTE                         CA1E       5       5       1   RUNTIME     
-     _CASE_SEARCH_8                            CA23      17      23       1   RUNTIME     
-     _CASE_SEARCH_8_BYTE                       CA3A      1A      26       1   RUNTIME     
+     _LCMP_P                                   CA50      15      21       3   RUNTIME     
+     _LNEG                                     CA65       D      13       1   RUNTIME     
+     _ILSEXT                                   CA72       7       7       2   RUNTIME     
+     _CASE_DIRECT_BYTE                         CA79       5       5       1   RUNTIME     
+     _CASE_SEARCH_8                            CA7E      17      23       1   RUNTIME     
+     _CASE_SEARCH_8_BYTE                       CA95      1A      26       1   RUNTIME     
 - VARIABLES:
 MODULE:                 -- timer.c.o --
 - PROCEDURES:
-     configureTimer                            C784       8       8       1   .text       
-     msDelay                                   C78C      2B      43       7   .text       
+     configureTimer                            C7DF       8       8       1   .text       
+     msDelay                                   C7E7      2B      43       7   .text       
 - VARIABLES:
 MODULE:                 -- CAN.c.o --
 - PROCEDURES:
-     configureCAN                              C7B7      31      49       1   .text       
-     TxCAN                                     C7E8      59      89       1   .text       
-     RxHandlerCAN                              C841      63      99       1   .text       
+     configureCAN                              C812      31      49       1   .text       
+     TxCAN                                     C843      59      89       1   .text       
+     RxHandlerCAN                              C89C      63      99       1   .text       
 - VARIABLES:
      _Vector_38                                FFB2       2       2       0   .abs_section_ffb2
 MODULE:                 -- FIFO.c.o --
 - PROCEDURES:
-     InitQueue                                 C8A4       9       9       1   .text       
-     IsQueueEmpty                              C8AD       B      11       3   .text       
-     AddToQueue                                C8B8      1E      30       1   .text       
-     DeQueue                                   C8D6      15      21       1   .text       
+     InitQueue                                 C8FF       9       9       1   .text       
+     IsQueueEmpty                              C908       B      11       3   .text       
+     AddToQueue                                C913      1E      30       1   .text       
+     DeQueue                                   C931      15      21       1   .text       
 - VARIABLES:
      pHead                                      96E       2       2       6   .common     
      pTail                                      970       2       2       3   .common     
 MODULE:                 -- lcd.c.o --
 - PROCEDURES:
-     configureLCD                              C8EB      59      89       1   .text       
-     LCDdata                                   C944      36      54       1   .text       
-     LCDcmd                                    C97A      36      54       7   .text       
-     LCDputs                                   C9B0      29      41       1   .text       
-     LCDprintf                                 C9D9      1C      28       1   .text       
+     configureLCD                              C946      59      89       1   .text       
+     LCDdata                                   C99F      36      54       1   .text       
+     LCDcmd                                    C9D5      36      54       7   .text       
+     LCDputs                                   CA0B      29      41       1   .text       
+     LCDprintf                                 CA34      1C      28       2   .text       
 - VARIABLES:
 
 *********************************************************************************************
@@ -593,7 +594,7 @@ MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12c32.c.o                              260      0      0
-  main.c.o                                     0    147     17
+  main.c.o                                     0    195     60
   Start12.c.o                                  0     49      0
   HEAP.C.o (ansisi.lib)                      100     12      0
   PRINTF.C.o (ansisi.lib)                      6   1212    116
@@ -619,7 +620,7 @@ SECTION: ".init"
 SECTION: ".rodata"
   pow10 pow16 pow8 
 SECTION: ".rodata1"
-  STRING.Program.started..2 
+  STRING.Program.started..2 STRING.ID.0x.03lx.DLC...u...3 
 SECTION: ".abs_section_8"
   _PORTE 
 SECTION: ".abs_section_9"
@@ -1308,34 +1309,35 @@ OBJECT LIST SORTED BY ADDRESS
      pow16                                     C063      20      32       4   .rodata     
      pow8                                      C083      2C      44       4   .rodata     
      STRING.Program.started..2                 C0AF      11      17       1   .rodata1    
-     main                                      C0C0      93     147       1   .text       
-     _heapcrash_                               C153       C      12       3   .text       
-     vprintf                                   C15F     478    1144      49   .text       
-     _out                                      C5D7       C      12       9   .text       
-     deposit_char                              C5E3       F      15       1   .text       
-     vsprintf                                  C5F2      29      41       1   .text       
-     malloc                                    C61B      A5     165       2   .text       
-     free                                      C6C0      C4     196       3   .text       
-     configureTimer                            C784       8       8       1   .text       
-     msDelay                                   C78C      2B      43       7   .text       
-     configureCAN                              C7B7      31      49       1   .text       
-     TxCAN                                     C7E8      59      89       1   .text       
-     RxHandlerCAN                              C841      63      99       1   .text       
-     InitQueue                                 C8A4       9       9       1   .text       
-     IsQueueEmpty                              C8AD       B      11       3   .text       
-     AddToQueue                                C8B8      1E      30       1   .text       
-     DeQueue                                   C8D6      15      21       1   .text       
-     configureLCD                              C8EB      59      89       1   .text       
-     LCDdata                                   C944      36      54       1   .text       
-     LCDcmd                                    C97A      36      54       7   .text       
-     LCDputs                                   C9B0      29      41       1   .text       
-     LCDprintf                                 C9D9      1C      28       1   .text       
-     _LCMP_P                                   C9F5      15      21       3   RUNTIME     
-     _LNEG                                     CA0A       D      13       1   RUNTIME     
-     _ILSEXT                                   CA17       7       7       2   RUNTIME     
-     _CASE_DIRECT_BYTE                         CA1E       5       5       1   RUNTIME     
-     _CASE_SEARCH_8                            CA23      17      23       1   RUNTIME     
-     _CASE_SEARCH_8_BYTE                       CA3A      1A      26       1   RUNTIME     
+     STRING.ID.0x.03lx.DLC...u...3             C0C0      2B      43       1   .rodata1    
+     main                                      C0EB      C3     195       1   .text       
+     _heapcrash_                               C1AE       C      12       3   .text       
+     vprintf                                   C1BA     478    1144      49   .text       
+     _out                                      C632       C      12       9   .text       
+     deposit_char                              C63E       F      15       1   .text       
+     vsprintf                                  C64D      29      41       1   .text       
+     malloc                                    C676      A5     165       2   .text       
+     free                                      C71B      C4     196       3   .text       
+     configureTimer                            C7DF       8       8       1   .text       
+     msDelay                                   C7E7      2B      43       7   .text       
+     configureCAN                              C812      31      49       1   .text       
+     TxCAN                                     C843      59      89       1   .text       
+     RxHandlerCAN                              C89C      63      99       1   .text       
+     InitQueue                                 C8FF       9       9       1   .text       
+     IsQueueEmpty                              C908       B      11       3   .text       
+     AddToQueue                                C913      1E      30       1   .text       
+     DeQueue                                   C931      15      21       1   .text       
+     configureLCD                              C946      59      89       1   .text       
+     LCDdata                                   C99F      36      54       1   .text       
+     LCDcmd                                    C9D5      36      54       7   .text       
+     LCDputs                                   CA0B      29      41       1   .text       
+     LCDprintf                                 CA34      1C      28       2   .text       
+     _LCMP_P                                   CA50      15      21       3   RUNTIME     
+     _LNEG                                     CA65       D      13       1   RUNTIME     
+     _ILSEXT                                   CA72       7       7       2   RUNTIME     
+     _CASE_DIRECT_BYTE                         CA79       5       5       1   RUNTIME     
+     _CASE_SEARCH_8                            CA7E      17      23       1   RUNTIME     
+     _CASE_SEARCH_8_BYTE                       CA95      1A      26       1   RUNTIME     
      _Vector_38                                FFB2       2       2       0   .abs_section_ffb2
 
 *********************************************************************************************
@@ -1361,7 +1363,7 @@ rtshc12.c.o (ansisi.lib):
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xCA54 ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xCAAF ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1373,7 +1375,7 @@ _Startup                  USES __SEG_END_SSTACK Init main
 main                      USES configureCAN configureTimer configureLCD _DDRS 
                                 InitQueue _PTS STRING.Program.started..2 LCDprintf 
                                 _CANCTL0 _CANRFLG _CANRIER TxCAN IsQueueEmpty DeQueue 
-                                free msDelay 
+                                STRING.ID.0x.03lx.DLC...u...3 free msDelay 
 vprintf                   USES vprintf _out _CASE_SEARCH_8_BYTE 
                                 _CASE_DIRECT_BYTE _CASE_SEARCH_8 pbuf _ILSEXT _LNEG pow8 _LCMP_P 
                                 pow16 pow10 
@@ -1492,6 +1494,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 8
-Total size of all blocks to be downloaded: 2650
+Number of blocks to be downloaded: 7
+Total size of all blocks to be downloaded: 2741
 

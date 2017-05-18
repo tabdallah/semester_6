@@ -46,13 +46,13 @@ void main(void) {
 		{
 		  pTemp = DeQueue();  // Grab a message from the Queue
 
-      /*		  		  	  		  
+      		  		  	  		  
 		  LCDprintf("ID:0x%03lx DLC: %u\n%u %u %u %u %u %u %u %u", \
 		    pTemp->Data.ID, pTemp->Data.DLC, *(pTemp->Data.DATA), *(pTemp->Data.DATA + 1), \
 		    *(pTemp->Data.DATA + 2), *(pTemp->Data.DATA + 3), *(pTemp->Data.DATA + 4), \
 		    *(pTemp->Data.DATA + 5), *(pTemp->Data.DATA + 6), *(pTemp->Data.DATA + 7));
 
-      */
+      
 		  free(pTemp->Data.DATA); // Free the memory malloc'd for data
 		  free(pTemp);            // Free the memory malloc'd for the node structure				   
 		}

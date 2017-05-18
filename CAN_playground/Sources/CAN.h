@@ -11,7 +11,7 @@
 #define CAN_FILTER_16b 0x10		// Define four 16-bit filters
 
 // Acceptance filter definitions
-#define ACC_CODE_ID100 0x2000
+#define ACC_CODE_ID100 0x2020
 #define ACC_CODE_ID100_HIGH ((ACC_CODE_ID100 & 0xFF00)>>8)
 #define ACC_CODE_ID100_LOW (ACC_CODE_ID100 & 0x00FF)
 
